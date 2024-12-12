@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SSE Example</title>
+</head>
+<body>
+    <h1>Status Counts via SSE</h1>
+    <div>
+        <strong>Full :</strong> <span id="full-count">Waiting...</span><br>
+        <strong>Medium :</strong> <span id="medium-count">Waiting...</span><br>
+        <strong>Empty :</strong> <span id="empty-count">Waiting...</span>
+    </div>
+
+    <script>
+        // Verifica se o navegador suporta SSE
+        if (typeof(EventSource) !== "undefined") {
+            // Cria uma nova conexão SSE para o seu endpoint
+            var source = new EventSource("http://localhost:9999/sse");
+
+            // Quando uma nova mensagem for recebida
+            source.onmessage = function(event) {
+                
+                var data = JSON.parse(event.data);        
+                document.getElementById("full-count").innerHTML = data.full;
+                document.getElementById("medium-count").innerHTML = data.medium;
+                document.getElementById("empty-count").innerHTML = data.empty;
+            };
+
+            
+            source.onerror = function(event) {
+                console.error("Erro na conexão SSE:", event);
+            };
+        } else {
+            document.body.innerHTML = "Seu navegador não suporta SSE.";
+        }
+    </script>
+</body>
+</html>
